@@ -1,0 +1,68 @@
+[gd_scene load_steps=4 format=3 uid="uid://dxfywxkw25dcl"]
+
+[ext_resource type="Script" path="res://main.gd" id="1_5m4i5"]
+[ext_resource type="Script" path="res://addons/OBSControlLibrary/SlideoutContainer/slide_out_container.gd" id="1_wssgj"]
+[ext_resource type="Texture2D" uid="uid://b1wkmyv7he2nl" path="res://icon.svg" id="2_o1q18"]
+
+[node name="Main" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_5m4i5")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "OBS Control Library"
+
+[node name="HSeparator" type="HSeparator" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="SlideoutContainer" type="Container" parent="PanelContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("1_wssgj")
+slide_edge = 3
+slide_duration = 1.0
+slide_amount = 1.0
+
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/VBoxContainer/HBoxContainer/SlideoutContainer"]
+layout_mode = 2
+texture = ExtResource("2_o1q18")
+
+[node name="SlideoutControls" type="VBoxContainer" parent="PanelContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="BTN_SlideIn" type="Button" parent="PanelContainer/VBoxContainer/HBoxContainer/SlideoutControls"]
+layout_mode = 2
+text = "IN"
+
+[node name="BTN_SlideOut" type="Button" parent="PanelContainer/VBoxContainer/HBoxContainer/SlideoutControls"]
+layout_mode = 2
+text = "OUT"
+
+[connection signal="pressed" from="PanelContainer/VBoxContainer/HBoxContainer/SlideoutControls/BTN_SlideIn" to="." method="_on_btn_slide_in_pressed"]
+[connection signal="pressed" from="PanelContainer/VBoxContainer/HBoxContainer/SlideoutControls/BTN_SlideOut" to="." method="_on_btn_slide_out_pressed"]

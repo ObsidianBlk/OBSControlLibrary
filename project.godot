@@ -1,0 +1,17 @@
+config_version=5
+
+[application]
+
+config/name="OBSControlLibrary"
+run/main_scene="res://main.tscn"
+config/features=PackedStringArray("4.2", "Mobile")
+config/icon="res://icon.svg"
+config/tags=PackedStringArray("addon", "control", "ui")
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/OBSControlLibrary/plugin.cfg")
+
+[rendering]
+
+renderer/rendering_method="mobile"
