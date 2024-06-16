@@ -17,6 +17,7 @@ signal slide_interrupted()
 # ------------------------------------------------------------------------------
 enum InitialAction {NONE=0, SLIDE_IN_VIEW=1, SLIDE_FROM_VIEW=2}
 enum SlideEdge {TOP=0, RIGHT=1, BOTTOM=2, LEFT=3}
+
 const DURATION_THRESHOLD : float = 0.0001
 
 # ------------------------------------------------------------------------------
@@ -24,18 +25,22 @@ const DURATION_THRESHOLD : float = 0.0001
 # ------------------------------------------------------------------------------
 @export_category("SlideoutContainer")
 @export var initial_action : InitialAction = InitialAction.NONE
-@export_subgroup("Setup")
+@export_subgroup("Config")
 @export var slide_edge : SlideEdge = SlideEdge.TOP:			set=set_slide_edge
 @export var slide_duration : float = 0.0:					set=set_slide_duration
 @export_range(0.0, 1.0) var slide_amount : float = 0.0:		set=set_slide_amount
 @export var slide_from_viewport : bool = true:				set=set_slide_from_viewport
+@export_subgroup("Tweening")
+@export var transition_type : Tween.TransitionType = Tween.TransitionType.TRANS_LINEAR:	set=set_transition_type
+@export var ease_type : Tween.EaseType = Tween.EaseType.EASE_IN:						set=set_ease_type
+@export var custom_curve : Curve = null:												set=set_custom_curve
 
 # ------------------------------------------------------------------------------
 # Variables
 # ------------------------------------------------------------------------------
 var _child_info : Dictionary = {}
 var _tween : Tween = null
-var _to_hidden : bool = false
+var _to_target : float = 0.0
 
 # ------------------------------------------------------------------------------
 # Setters
@@ -56,6 +61,24 @@ func set_slide_from_viewport(sfv : bool) -> void:
 	slide_from_viewport = sfv
 	_UpdateChildrenOffsets(slide_amount)
 
+func set_transition_type(t : Tween.TransitionType) -> void:
+	transition_type = t
+	if _tween != null and custom_curve == null:
+		slide_to(_to_target)
+
+func set_ease_type(e : Tween.EaseType) -> void:
+	ease_type = e
+	if _tween != null and custom_curve == null:
+		slide_to(_to_target)
+
+func set_custom_curve(c : Curve) -> void:
+	custom_curve = c
+	if custom_curve != null:
+		if _tween == null:
+			_UpdateChildrenOffsets(slide_amount)
+	elif _tween != null:
+		slide_to(_to_target)
+
 # ------------------------------------------------------------------------------
 # Override Methods
 # ------------------------------------------------------------------------------
@@ -66,6 +89,18 @@ func _ready() -> void:
 				slide_in()
 			InitialAction.SLIDE_FROM_VIEW:
 				slide_out()
+
+func _enter_tree() -> void:
+	var view : Viewport = get_viewport()
+	if view == null: return
+	if not view.size_changed.is_connected(_on_viewport_size_changed):
+		view.size_changed.connect(_on_viewport_size_changed)
+
+func _exit_tree() -> void:
+	var view : Viewport = get_viewport()
+	if view == null: return
+	if view.size_changed.is_connected(_on_viewport_size_changed):
+		view.size_changed.disconnect(_on_viewport_size_changed)
 
 func _notification(what : int) -> void:
 	match what:
@@ -110,6 +145,8 @@ func _UpdateChildRect(child : Control) -> void:
 func _UpdateChildOffset(child : Control, amount_hidden : float) -> void:
 	if not child.name in _child_info: return
 	amount_hidden = clampf(amount_hidden, 0.0, 1.0)
+	if custom_curve != null:
+		amount_hidden = custom_curve.sample(amount_hidden)
 	var container_size : Vector2 = get_size()
 	var crect : Rect2 = _child_info[child.name].rect
 	var pvr : Rect2 = get_viewport_rect()
@@ -159,6 +196,7 @@ func slide_to(target : float, duration : float = 0.0) -> void:
 		duration = slide_duration
 	
 	target = clampf(target, 0.0, 1.0)
+	_to_target = target
 	
 	var dist : float = abs(target - slide_amount)
 	if dist <= 0.0001: return
@@ -170,6 +208,9 @@ func slide_to(target : float, duration : float = 0.0) -> void:
 	else:
 		slide_started.emit()
 		_tween = create_tween()
+		if custom_curve == null:
+			_tween.set_trans(transition_type)
+			_tween.set_ease(ease_type)
 		_tween.tween_property(self, "slide_amount", target, dur)
 		await _tween.finished
 	slide_finished.emit()
@@ -192,8 +233,11 @@ func stop_slide() -> void:
 # ------------------------------------------------------------------------------
 # Handler Methods
 # ------------------------------------------------------------------------------
-func _on_tween_update(amount_hidden : float) -> void:
-	slide_amount = amount_hidden
-	for cinfo : Dictionary in _child_info:
-		_UpdateChildOffset(cinfo.node, amount_hidden)
+func _on_viewport_size_changed() -> void:
+	_UpdateChildrenOffsets.call_deferred(slide_amount)
+
+#func _on_tween_update(amount_hidden : float) -> void:
+	#slide_amount = amount_hidden
+	#for cinfo : Dictionary in _child_info:
+		#_UpdateChildOffset(cinfo.node, amount_hidden)
 

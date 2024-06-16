@@ -22,7 +22,7 @@ const CUSTOM_SPEED_THRESHOLD : float = 0.001
 @export_subgroup("Animation")
 @export var sprite_frames : SpriteFrames = null
 @export var animation : StringName = &"default":				set = set_animation
-@export_range(0.0, INF, 0.01) var speed_scale : float = 1.0
+@export var speed_scale : float = 1.0:							set = set_speed_scale
 @export var auto_play : bool = false:							set = set_auto_play
 
 # ------------------------------------------------------------------------------
@@ -50,14 +50,17 @@ func set_sprite_frames(sf : SpriteFrames) -> void:
 	if sprite_frames != null and sprite_frames.has_animation(animation) and auto_play:
 		play(animation)
 
+func set_speed_scale(s : float) -> void:
+	if s >= 0.0:
+		speed_scale = s
+
 func set_animation(anim_name : StringName) -> void:
 	animation = anim_name
 	if sprite_frames != null:
-		if not sprite_frames.has_animation(animation):
-			animation = &"default"
-		if not Engine.is_editor_hint(): return
-		if auto_play:
-			play(animation)
+		if sprite_frames.has_animation(animation):
+			if not Engine.is_editor_hint(): return
+			if auto_play:
+				play(animation)
 
 
 func set_auto_play(ap : bool) -> void:

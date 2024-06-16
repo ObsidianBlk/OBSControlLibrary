@@ -19,6 +19,14 @@ Bryan "ObsidianBlk" Miller
 
 To be written!
 
+## Asset Credits
+### Graphics
+> **Title:** Classic Hero  
+**Author:** GrafxKid  
+**URL:** [https://opengameart.org/content/classic-hero](https://opengameart.org/content/classic-hero)  
+**License(s):** [CC0](https://creativecommons.org/publicdomain/zero/1.0/)  
+**Modified:** Removed background and adjusted spritesheet image size.
+
 
 ## License
 
