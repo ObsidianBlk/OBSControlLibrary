@@ -1,31 +1,34 @@
 # OBS Control Library Plugin/Addon
 
-A plugin/addon containing a set of new and extended Control nodes for added UI functionality and simplicity.
+![GitHub License](https://img.shields.io/github/license/ObsidianBlk/GWJ68)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/t/ObsidianBlk/GWJ68)
+![GitHub last commit](https://img.shields.io/github/last-commit/ObsidianBlk/GWJ68)
+---
+### Supported Godot Versions
+![Static Badge](https://img.shields.io/badge/Godot-v4.2.2-%2523478cbf?logo=godot-engine&logoColor=cyian&color=green)
+---
+
+> An addon of new Control nodes for use in your projects!
+
+
+
+## Documentation
+[OBSControlLibrary Documentation can be found Here](./docs/index.md)
+
+## Asset Credits
+Listed assets are used in the demonstration project, but not the addon main addon itself. 
+#### Graphics
+> **Title:** Classic Hero  
+**Author:** GrafxKid  
+**URL:** [https://opengameart.org/content/classic-hero](https://opengameart.org/content/classic-hero)  
+**License(s):** [CC0](https://creativecommons.org/publicdomain/zero/1.0/)  
+**Modified:** Removed background and adjusted spritesheet image size.
 
 ## Author
 Bryan "ObsidianBlk" Miller
 
 * [Itch.io Profile](https://obsidianblk.itch.io/)
 * [Github Profile](https://github.com/ObsidianBlk)
-
-## Installation
-
-* Clone the repository
-* Copy the 'addons/OBSControlLibrary' folder to your project folder
-* Go into "Project Settings", then the "Plugins" TAB
-* Click "Enable" for the "OBS Control Library" plugin!
-
-## Usage
-
-To be written!
-
-## Asset Credits
-### Graphics
-> **Title:** Classic Hero  
-**Author:** GrafxKid  
-**URL:** [https://opengameart.org/content/classic-hero](https://opengameart.org/content/classic-hero)  
-**License(s):** [CC0](https://creativecommons.org/publicdomain/zero/1.0/)  
-**Modified:** Removed background and adjusted spritesheet image size.
 
 
 ## License

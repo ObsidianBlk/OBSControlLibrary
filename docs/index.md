@@ -1,0 +1,21 @@
+# OBS Control Library Documentation
+
+## New Control Nodes
+* ![SlideoutContainer icon](../addons/OBSControlLibrary/SlideoutContainer/SlideoutContainer.svg "SlideoutContainer icon") [SlideoutContainer](./SlideoutContainer/slideout_container.md) - A container that can animate child nodes sliding into or out of the container, or the active viewport.
+* ![SlideoutContainer icon](../addons/OBSControlLibrary/AnimatedTextureRect/AnimatedTextureRect.svg "SlideoutContainer icon") [AnimatedTextureRect](./AnimatedTextureRect/animated_texture_rect.md) - An animated form of the TextureRect node, using the SpriteFrames resource for texture and animation data.
+
+![Demo of Slideout Container and AnimatedTextureRect](./imgs/demo_slideout_container_and_animated_texture_rect.gif  "Demo of Slideout Container and AnimatedTextureRect")
+
+## Installation
+* Clone the OBSControlLibrary repository
+* Copy the addons folder into your project's main folder.
+
+![Addon in project folder](./imgs/addon_in_resource_folder.png  "Addon in project folder")
+
+* Select the Project -> Project Settings from the top menu.
+
+![Select Project Settings](./imgs/select_projects.png  "Select Project Settings")
+
+* In the Project settings dialog window, Select the Plugins TAB and enable OBSControlLibrary
+
+![Enable addon](./imgs/enable_addon.png  "Enable addon")
