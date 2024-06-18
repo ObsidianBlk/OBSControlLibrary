@@ -1,8 +1,8 @@
 # OBS Control Library Plugin/Addon
 
-![GitHub License](https://img.shields.io/github/license/ObsidianBlk/GWJ68)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/t/ObsidianBlk/GWJ68)
-![GitHub last commit](https://img.shields.io/github/last-commit/ObsidianBlk/GWJ68)
+![GitHub License](https://img.shields.io/github/license/ObsidianBlk/OBSControlLibrary)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/t/ObsidianBlk/OBSControlLibrary)
+![GitHub last commit](https://img.shields.io/github/last-commit/ObsidianBlk/OBSControlLibrary)
 ---
 ### Supported Godot Versions
 ![Static Badge](https://img.shields.io/badge/Godot-v4.2.2-%2523478cbf?logo=godot-engine&logoColor=cyian&color=green)
