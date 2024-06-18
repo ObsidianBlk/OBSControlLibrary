@@ -5,10 +5,6 @@
 [ext_resource type="Script" path="res://addons/OBSControlLibrary/AnimatedTextureRect/animated_texture_rect.gd" id="4_7hg0g"]
 [ext_resource type="Texture2D" uid="uid://xxhpl1sqketd" path="res://assets/Hero.png" id="5_n3ggb"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_ytjwy"]
-atlas = ExtResource("5_n3ggb")
-region = Rect2(32, 0, 16, 16)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_o0y0t"]
 atlas = ExtResource("5_n3ggb")
 region = Rect2(0, 0, 16, 16)
@@ -16,6 +12,10 @@ region = Rect2(0, 0, 16, 16)
 [sub_resource type="AtlasTexture" id="AtlasTexture_lykpi"]
 atlas = ExtResource("5_n3ggb")
 region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ytjwy"]
+atlas = ExtResource("5_n3ggb")
+region = Rect2(32, 0, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_s1rcs"]
 atlas = ExtResource("5_n3ggb")
@@ -135,15 +135,15 @@ slide_amount = 1.0
 transition_type = 1
 ease_type = 2
 
-[node name="AnimatedTextureRect" type="TextureRect" parent="PanelContainer/VBoxContainer/HBoxContainer/SlideoutContainer"]
+[node name="AnimatedTextureRect" type="Control" parent="PanelContainer/VBoxContainer/HBoxContainer/SlideoutContainer"]
 unique_name_in_owner = true
 texture_filter = 3
 layout_mode = 2
-texture = SubResource("AtlasTexture_ytjwy")
 script = ExtResource("4_7hg0g")
 sprite_frames = SubResource("SpriteFrames_yg2p7")
 animation = &"idle"
 auto_play = true
+stretch_mode = 5
 
 [node name="SlideoutControls" type="VBoxContainer" parent="PanelContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
