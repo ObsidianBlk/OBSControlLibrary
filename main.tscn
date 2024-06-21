@@ -156,6 +156,9 @@ text = "IN"
 layout_mode = 2
 text = "OUT"
 
+[node name="TextureButton" type="TextureButton" parent="PanelContainer/VBoxContainer/HBoxContainer/SlideoutControls"]
+layout_mode = 2
+
 [connection signal="slide_finished" from="PanelContainer/VBoxContainer/HBoxContainer/SlideoutContainer" to="." method="_on_slide_ended"]
 [connection signal="pressed" from="PanelContainer/VBoxContainer/HBoxContainer/SlideoutControls/BTN_SlideIn" to="." method="_on_btn_slide_in_pressed"]
 [connection signal="pressed" from="PanelContainer/VBoxContainer/HBoxContainer/SlideoutControls/BTN_SlideOut" to="." method="_on_btn_slide_out_pressed"]
