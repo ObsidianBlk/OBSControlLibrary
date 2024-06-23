@@ -1,9 +1,11 @@
-[gd_scene load_steps=16 format=3 uid="uid://dxfywxkw25dcl"]
+[gd_scene load_steps=18 format=3 uid="uid://dxfywxkw25dcl"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_5m4i5"]
 [ext_resource type="Script" path="res://addons/OBSControlLibrary/SlideoutContainer/slide_out_container.gd" id="1_wssgj"]
 [ext_resource type="Script" path="res://addons/OBSControlLibrary/AnimatedTextureRect/animated_texture_rect.gd" id="4_7hg0g"]
+[ext_resource type="Script" path="res://addons/OBSControlLibrary/AnimatedTextureButton/animated_texture_button.gd" id="5_bk2g2"]
 [ext_resource type="Texture2D" uid="uid://xxhpl1sqketd" path="res://assets/Hero.png" id="5_n3ggb"]
+[ext_resource type="SpriteFrames" uid="uid://bgrpvfauksqob" path="res://assets/arrow_sprite_frames.tres" id="6_ikaau"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_o0y0t"]
 atlas = ExtResource("5_n3ggb")
@@ -148,17 +150,139 @@ stretch_mode = 5
 [node name="SlideoutControls" type="VBoxContainer" parent="PanelContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 
-[node name="BTN_SlideIn" type="Button" parent="PanelContainer/VBoxContainer/HBoxContainer/SlideoutControls"]
+[node name="ABTN_SlideIn" type="BaseButton" parent="PanelContainer/VBoxContainer/HBoxContainer/SlideoutControls"]
+_import_path = NodePath("")
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+editor_description = ""
+visible = true
+modulate = Color(1, 1, 1, 1)
+self_modulate = Color(1, 1, 1, 1)
+show_behind_parent = false
+top_level = false
+clip_children = 0
+light_mask = 1
+visibility_layer = 1
+z_index = 0
+z_as_relative = true
+y_sort_enabled = false
+texture_filter = 0
+texture_repeat = 0
+material = null
+use_parent_material = false
+clip_contents = false
+custom_minimum_size = Vector2(64, 32)
+layout_direction = 0
 layout_mode = 2
-text = "IN"
+size_flags_horizontal = 1
+size_flags_vertical = 1
+size_flags_stretch_ratio = 1.0
+auto_translate = true
+localize_numeral_system = true
+tooltip_text = ""
+focus_neighbor_left = NodePath("")
+focus_neighbor_top = NodePath("")
+focus_neighbor_right = NodePath("")
+focus_neighbor_bottom = NodePath("")
+focus_next = NodePath("")
+focus_previous = NodePath("")
+focus_mode = 2
+mouse_filter = 0
+mouse_force_pass_scroll_events = true
+mouse_default_cursor_shape = 0
+theme = null
+theme_type_variation = &""
+disabled = false
+toggle_mode = false
+button_pressed = false
+action_mode = 1
+button_mask = 1
+keep_pressed_outside = false
+button_group = null
+shortcut = null
+shortcut_feedback = true
+shortcut_in_tooltip = true
+script = ExtResource("5_bk2g2")
+sprite_frames = ExtResource("6_ikaau")
+ignore_texture_size = true
+stretch_mode = 4
+flip_h = true
+normal_animation = &"normal"
+pressed_animation = &"pressed"
+toggle_animation = null
+untoggle_animation = null
+hover_animation = &"hover"
+focused_animation = &"focused"
 
-[node name="BTN_SlideOut" type="Button" parent="PanelContainer/VBoxContainer/HBoxContainer/SlideoutControls"]
+[node name="ABTN_SlideOut" type="BaseButton" parent="PanelContainer/VBoxContainer/HBoxContainer/SlideoutControls"]
+_import_path = NodePath("")
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+editor_description = ""
+visible = true
+modulate = Color(1, 1, 1, 1)
+self_modulate = Color(1, 1, 1, 1)
+show_behind_parent = false
+top_level = false
+clip_children = 0
+light_mask = 1
+visibility_layer = 1
+z_index = 0
+z_as_relative = true
+y_sort_enabled = false
+texture_filter = 0
+texture_repeat = 0
+material = null
+use_parent_material = false
+clip_contents = false
+custom_minimum_size = Vector2(64, 32)
+layout_direction = 0
 layout_mode = 2
-text = "OUT"
-
-[node name="TextureButton" type="TextureButton" parent="PanelContainer/VBoxContainer/HBoxContainer/SlideoutControls"]
-layout_mode = 2
+size_flags_horizontal = 1
+size_flags_vertical = 1
+size_flags_stretch_ratio = 1.0
+auto_translate = true
+localize_numeral_system = true
+tooltip_text = ""
+focus_neighbor_left = NodePath("")
+focus_neighbor_top = NodePath("")
+focus_neighbor_right = NodePath("")
+focus_neighbor_bottom = NodePath("")
+focus_next = NodePath("")
+focus_previous = NodePath("")
+focus_mode = 2
+mouse_filter = 0
+mouse_force_pass_scroll_events = true
+mouse_default_cursor_shape = 0
+theme = null
+theme_type_variation = &""
+disabled = false
+toggle_mode = false
+button_pressed = false
+action_mode = 1
+button_mask = 1
+keep_pressed_outside = false
+button_group = null
+shortcut = null
+shortcut_feedback = true
+shortcut_in_tooltip = true
+script = ExtResource("5_bk2g2")
+sprite_frames = ExtResource("6_ikaau")
+ignore_texture_size = true
+stretch_mode = 4
+normal_animation = &"normal"
+pressed_animation = &"pressed"
+toggle_animation = null
+untoggle_animation = null
+hover_animation = &"hover"
+focused_animation = &"focused"
 
 [connection signal="slide_finished" from="PanelContainer/VBoxContainer/HBoxContainer/SlideoutContainer" to="." method="_on_slide_ended"]
-[connection signal="pressed" from="PanelContainer/VBoxContainer/HBoxContainer/SlideoutControls/BTN_SlideIn" to="." method="_on_btn_slide_in_pressed"]
-[connection signal="pressed" from="PanelContainer/VBoxContainer/HBoxContainer/SlideoutControls/BTN_SlideOut" to="." method="_on_btn_slide_out_pressed"]
+[connection signal="pressed" from="PanelContainer/VBoxContainer/HBoxContainer/SlideoutControls/ABTN_SlideIn" to="." method="_on_btn_slide_in_pressed"]
+[connection signal="pressed" from="PanelContainer/VBoxContainer/HBoxContainer/SlideoutControls/ABTN_SlideOut" to="." method="_on_btn_slide_out_pressed"]

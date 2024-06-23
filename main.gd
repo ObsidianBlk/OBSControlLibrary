@@ -20,12 +20,14 @@ func _on_slide_ended() -> void:
 
 func _on_btn_slide_in_pressed():
 	if _slideout_container == null: return
-	_atex_rect.play(ANIM_RUN)
-	_atex_rect.flip_h = false
-	_slideout_container.slide_in()
+	if _slideout_container.slide_amount > 0.05 and not _slideout_container.is_sliding():
+		_atex_rect.play(ANIM_RUN)
+		_atex_rect.flip_h = false
+		_slideout_container.slide_in()
 
 func _on_btn_slide_out_pressed():
 	if _slideout_container == null: return
-	_atex_rect.play(ANIM_RUN)
-	_atex_rect.flip_h = true
-	_slideout_container.slide_out()
+	if _slideout_container.slide_amount < 0.95 and not _slideout_container.is_sliding():
+		_atex_rect.play(ANIM_RUN)
+		_atex_rect.flip_h = true
+		_slideout_container.slide_out()

@@ -213,6 +213,7 @@ func slide_to(target : float, duration : float = 0.0) -> void:
 			_tween.set_ease(ease_type)
 		_tween.tween_property(self, "slide_amount", target, dur)
 		await _tween.finished
+		_tween = null
 	slide_finished.emit()
 
 func slide_in(duration : float = 0.0) -> void:

@@ -6,6 +6,8 @@ class_name SpriteFramesManager
 # Signals
 # ------------------------------------------------------------------------------
 signal texture_changed(texture : Texture2D)
+signal animation_finished(animation : StringName)
+signal animation_looped(animation : StringName)
 
 # ------------------------------------------------------------------------------
 # Constants
@@ -25,7 +27,7 @@ enum AnimationState {
 var sprite_frames : SpriteFrames = null:	set=set_sprite_frames
 var speed_scale : float = 1.0:				set=set_speed_scale
 var animation : StringName = &"":			set=set_animation
-var auto_play : bool = false:				set=set_auto_play
+#var auto_play : bool = false:				set=set_auto_play
 
 # ------------------------------------------------------------------------------
 # "Private" Variables
@@ -42,8 +44,7 @@ var _texture : Texture2D = null
 func set_sprite_frames(sf : SpriteFrames) -> void:
 	sprite_frames = sf
 	if sprite_frames != null:
-		if Engine.is_editor_hint() and auto_play:
-			_InitAnimVars(1.0, false)
+		_InitAnimVars(1.0, false)
 	else:
 		_texture = null
 		texture_changed.emit(_texture)
@@ -54,13 +55,12 @@ func set_speed_scale(ss : float) -> void:
 
 func set_animation(anim_name : StringName) -> void:
 	animation = anim_name
-	if Engine.is_editor_hint() and auto_play:
-		_InitAnimVars(1.0, false)
+	_InitAnimVars(1.0, false)
 
-func set_auto_play(ap : bool) -> void:
-	auto_play = ap
-	if Engine.is_editor_hint() and auto_play:
-		_InitAnimVars(1.0, false)
+#func set_auto_play(ap : bool) -> void:
+	#auto_play = ap
+	#if Engine.is_editor_hint():
+		#_InitAnimVars(1.0, false)
 
 # ------------------------------------------------------------------------------
 # Private Methods
@@ -89,6 +89,10 @@ func _CheckTextureUpdate() -> void:
 		_texture = tex
 		texture_changed.emit(_texture)
 
+func _WithinAnimation() -> bool:
+	if sprite_frames == null or not sprite_frames.has_animation(animation): return false
+	return _current_frame >= 0 and _current_frame < sprite_frames.get_frame_count(animation)
+
 # ------------------------------------------------------------------------------
 # Public Methods
 # ------------------------------------------------------------------------------
@@ -111,11 +115,12 @@ func reset_animation() -> void:
 
 func update_animation(delta : float) -> AnimationState:
 	if sprite_frames == null: return AnimationState.NONE
+	if not sprite_frames.has_animation(animation): return AnimationState.NONE
 	var astate : AnimationState = AnimationState.PROCESSED
 	_frame_duration -= delta
 	if _frame_duration <= 0.0:
 		_current_frame += _anim_direction
-		if _current_frame < 0 or _current_frame == sprite_frames.get_frame_count(animation):
+		if not _WithinAnimation():
 			if sprite_frames.get_animation_loop(animation):
 				astate = AnimationState.LOOPED
 				#loop_finished.emit(_canim)
@@ -123,11 +128,15 @@ func update_animation(delta : float) -> AnimationState:
 			else:
 				astate = AnimationState.FINISHED
 				#animation_finished.emit(_canim)
-		if astate != AnimationState.FINISHED:
+		if _WithinAnimation() and astate != AnimationState.FINISHED:
 			_frame_duration += _CalcFrameDuration()
 			_CheckTextureUpdate()
-		return astate
-	return AnimationState.NONE
+	match astate:
+		AnimationState.LOOPED:
+			animation_looped.emit(animation)
+		AnimationState.FINISHED:
+			animation_finished.emit(animation)
+	return astate
 
 func get_texture() -> Texture2D:
 	return _texture
@@ -135,4 +144,8 @@ func get_texture() -> Texture2D:
 func get_current_frame() -> int:
 	return _current_frame
 
+func has_animation(anim_name : StringName) -> bool:
+	if sprite_frames != null:
+		return sprite_frames.has_animation(anim_name)
+	return false
 

@@ -1,9 +1,7 @@
 @tool
-extends Button
+extends BaseButton
 class_name AnimatedTextureButton
 
-# TODO: To support the <finish_before_transition> property, I may need to overload the
-#   _gui_input() method... not sure yet.
 
 # ------------------------------------------------------------------------------
 # Signals
@@ -27,9 +25,10 @@ signal animation_looped(anim_name : StringName)
 @export var playing : bool = true
 
 @export_subgroup("Animations")
-@export var finish_before_transition : bool = false
 @export var normal_animation : StringName = &"":		set=set_normal_animation
 @export var pressed_animation : StringName = &"":		set=set_pressed_animation
+@export var toggle_animation : StringName = &"":		set=set_toggle_animation
+@export var untoggle_animation : StringName = &"":		set=set_untoggle_animation
 @export var hover_animation : StringName = &"":			set=set_hover_animation
 @export var disabled_animation : StringName = &"":		set=set_disabled_animation
 @export var focused_animation : StringName = &"":		set=set_focused_animation
@@ -54,8 +53,8 @@ func get_sprite_frames() -> SpriteFrames:
 
 func set_ignore_texture_size(its : bool) -> void:
 	ignore_texture_size = its
-	queue_redraw()
 	update_minimum_size()
+	queue_redraw()
 
 func set_stretch_mode(sm : TextureHelper.StretchMode) -> void:
 	stretch_mode = sm
@@ -70,21 +69,35 @@ func set_flip_v(fv : bool) -> void:
 	flip_v = fv
 	queue_redraw()
 
+func set_playing(p : bool) -> void:
+	playing = p
+	_sfm.auto_play = playing
+	_sfm_focus.auto_play = playing
+	_sfm_click_mask.auto_play = playing
+
 func set_normal_animation(anim_name : StringName) -> void:
 	normal_animation = anim_name
-	_UpdateActiveEditorAnimation()
+	_UpdateActiveAnimation()
 
 func set_pressed_animation(anim_name : StringName) -> void:
 	pressed_animation = anim_name
-	_UpdateActiveEditorAnimation()
+	_UpdateActiveAnimation()
+
+func set_toggle_animation(anim_name : StringName) -> void:
+	toggle_animation = anim_name
+	_UpdateActiveAnimation()
+
+func set_untoggle_animation(anim_name : StringName) -> void:
+	untoggle_animation = anim_name
+	_UpdateActiveAnimation()
 
 func set_hover_animation(anim_name : StringName) -> void:
 	hover_animation = anim_name
-	_UpdateActiveEditorAnimation()
+	_UpdateActiveAnimation()
 
 func set_disabled_animation(anim_name : StringName) -> void:
 	disabled_animation = anim_name
-	_UpdateActiveEditorAnimation()
+	_UpdateActiveAnimation()
 
 func set_focused_animation(anim_name : StringName) -> void:
 	focused_animation = anim_name
@@ -109,6 +122,9 @@ func _ready() -> void:
 	_sfm.texture_changed.connect(_on_texture_changed)
 	_sfm_focus.texture_changed.connect(_on_texture_changed)
 	_sfm_click_mask.texture_changed.connect(_on_texture_changed.bind(false))
+	toggled.connect(_on_self_button_toggled)
+	pressed.connect(_on_self_button_pressed)
+	_UpdateActiveAnimation()
 
 func _process(delta : float) -> void:
 	if not playing: return
@@ -119,7 +135,7 @@ func _process(delta : float) -> void:
 	_EmitSignalByState(_sfm_focus.animation, res)
 
 func _get_minimum_size() -> Vector2:
-	var msize : Vector2 = super.get_minimum_size()
+	var msize : Vector2 = Vector2.ZERO
 	
 	if not ignore_texture_size:
 		var tex : Texture2D = _sfm.get_texture()
@@ -135,13 +151,13 @@ func _draw() -> void:
 	var texture : Texture2D = _sfm.get_texture()
 	var focus_texture : Texture2D = _sfm_focus.get_texture()
 	
-	var draw_focused : bool = focus_texture.is_valid() and has_focus()
-	var draw_focused_only : bool = not texture.is_valid() and draw_focused
+	var draw_focused : bool = focus_texture != null and has_focus()
+	var draw_focused_only : bool = texture == null and draw_focused
 	
-	var tex : Texture2D = texture if texture.is_valid() else focus_texture
+	var tex : Texture2D = texture if texture != null else focus_texture
 	
 	var sdata : Dictionary = {}
-	if tex.is_valid():
+	if tex != null:
 		sdata = TextureHelper.Get_Texture_Stretch_Data(
 			tex,
 			get_size(),
@@ -169,6 +185,7 @@ func _notification(what : int) -> void:
 				_sfm.begin_animation(disabled_animation)
 			else:
 				_sfm.begin_animation(hover_animation)
+			update_minimum_size()
 		NOTIFICATION_MOUSE_EXIT:
 			_mouse_hover = false
 			if disabled:
@@ -191,23 +208,21 @@ func _EmitSignalByState(anim_name : StringName, anim_state : SpriteFramesManager
 		SpriteFramesManager.AnimationState.LOOPED:
 			animation_looped.emit(anim_name)
 
-func _UpdateActiveEditorAnimation() -> void:
-	if not Engine.is_editor_hint(): return
-	
-	if not normal_animation.is_empty():
-		_sfm.animation = normal_animation
+func _UpdateActiveAnimation() -> void:
+	if not disabled_animation.is_empty() and disabled:
+		_sfm.animation = disabled_animation
 		return
 	
-	if not hover_animation.is_empty():
-		_sfm.animation = hover_animation
-		return
-	
-	if not pressed_animation.is_empty():
+	if not pressed_animation.is_empty() and button_pressed:
 		_sfm.animation = pressed_animation
 		return
 	
-	if not disabled_animation.is_empty():
-		_sfm.animation = disabled_animation
+	if not hover_animation.is_empty() and _mouse_hover:
+		_sfm.animation = hover_animation
+		return
+	
+	if not normal_animation.is_empty():
+		_sfm.animation = normal_animation
 		return
 
 # ------------------------------------------------------------------------------
@@ -223,10 +238,28 @@ func _on_texture_changed(texture : Texture2D, redraw : bool = true) -> void:
 		queue_redraw()
 	update_minimum_size()
 
-func _on_self_button_toggled(toggle_on : bool) -> void:
-	if disabled: return
+func _on_self_button_pressed() -> void:
+	if disabled or not _sfm.has_animation(pressed_animation): return
+	_sfm.begin_animation(pressed_animation)
+	await _sfm.animation_finished
 	if _mouse_hover:
 		_sfm.begin_animation(hover_animation)
 	else:
 		_sfm.begin_animation(normal_animation)
+
+func _on_self_button_toggled(toggle_on : bool) -> void:
+	if disabled: return
+	if toggle_on:
+		if _sfm.has_animation(toggle_animation):
+			_sfm.begin_animation(toggle_animation)
+		elif _sfm.has_animation(pressed_animation):
+			_sfm.begin_animation(pressed_animation)
+	else:
+		if _sfm.has_animation(untoggle_animation):
+			_sfm.begin_animation(untoggle_animation)
+			await _sfm.animation_finished
+		if _mouse_hover:
+			_sfm.begin_animation(hover_animation)
+		else:
+			_sfm.begin_animation(normal_animation)
 	
