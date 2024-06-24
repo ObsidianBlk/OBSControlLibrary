@@ -212,8 +212,6 @@ stretch_mode = 4
 flip_h = true
 normal_animation = &"normal"
 pressed_animation = &"pressed"
-toggle_animation = null
-untoggle_animation = null
 hover_animation = &"hover"
 focused_animation = &"focused"
 
@@ -278,8 +276,6 @@ ignore_texture_size = true
 stretch_mode = 4
 normal_animation = &"normal"
 pressed_animation = &"pressed"
-toggle_animation = null
-untoggle_animation = null
 hover_animation = &"hover"
 focused_animation = &"focused"
 

@@ -1,4 +1,5 @@
 @tool
+@icon("res://addons/OBSControlLibrary/AnimatedTextureButton/AnimatedTextureButton.svg")
 extends BaseButton
 class_name AnimatedTextureButton
 
