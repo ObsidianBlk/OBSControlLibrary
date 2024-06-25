@@ -187,7 +187,7 @@ func _UpdateChildrenOffsets(amount_hidden : float) -> void:
 # ------------------------------------------------------------------------------
 # Public Methods
 # ------------------------------------------------------------------------------
-func slide_to(target : float, duration : float = 0.0) -> void:
+func slide_to(target : float, duration : float = 0.0, ignore_distance : bool = false) -> void:
 	stop_slide()
 	
 	if Engine.is_editor_hint():
@@ -201,7 +201,7 @@ func slide_to(target : float, duration : float = 0.0) -> void:
 	var dist : float = abs(target - slide_amount)
 	if dist <= 0.0001: return
 	
-	var dur : float = dist * duration
+	var dur : float = duration if ignore_distance else dist * duration
 	
 	if dur <= DURATION_THRESHOLD:
 		slide_amount = target
@@ -216,11 +216,11 @@ func slide_to(target : float, duration : float = 0.0) -> void:
 		_tween = null
 	slide_finished.emit()
 
-func slide_in(duration : float = 0.0) -> void:
-	slide_to(0.0, duration)
+func slide_in(duration : float = 0.0, ignore_distance : bool = false) -> void:
+	slide_to(0.0, duration, ignore_distance)
 
-func slide_out(duration : float = 0.0) -> void:
-	slide_to(1.0, duration)
+func slide_out(duration : float = 0.0, ignore_distance : bool = false) -> void:
+	slide_to(1.0, duration, ignore_distance)
 
 func is_sliding() -> bool:
 	return _tween != null
