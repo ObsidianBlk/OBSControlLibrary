@@ -26,10 +26,10 @@ const CUSTOM_SPEED_THRESHOLD : float = 0.001
 @export var auto_play : bool = false:							set = set_auto_play
 
 @export_subgroup("Display")
-@export var stretch_mode : TextureRect.StretchMode = TextureRect.STRETCH_KEEP:		set=set_stretch_mode
-@export var expand_mode : TextureRect.ExpandMode = TextureRect.EXPAND_KEEP_SIZE:	set=set_expand_mode
-@export var flip_h : bool = false:													set=set_flip_h
-@export var flip_v : bool = false:													set=set_flip_v
+@export var stretch_mode : TextureHelper.StretchMode = TextureHelper.StretchMode.KEEP:		set=set_stretch_mode
+@export var expand_mode : TextureHelper.ExpandMode = TextureHelper.ExpandMode.KEEP_SIZE:	set=set_expand_mode
+@export var flip_h : bool = false:															set=set_flip_h
+@export var flip_v : bool = false:															set=set_flip_v
 
 # ------------------------------------------------------------------------------
 # Variables
@@ -90,13 +90,13 @@ func set_flip_v(f : bool) -> void:
 	flip_v = f
 	queue_redraw()
 
-func set_stretch_mode(mode : TextureRect.StretchMode) -> void:
+func set_stretch_mode(mode : TextureHelper.StretchMode) -> void:
 	if mode != stretch_mode:
 		stretch_mode = mode
 		queue_redraw()
 		update_minimum_size()
 
-func set_expand_mode(mode : TextureRect.ExpandMode) -> void:
+func set_expand_mode(mode : TextureHelper.ExpandMode) -> void:
 	if mode != expand_mode:
 		expand_mode = mode
 		queue_redraw()
@@ -133,83 +133,35 @@ func _notification(what : int) -> void:
 func _draw() -> void:
 	if _texture == null: return
 	
-	var tex_size : Vector2 = Vector2.ZERO
-	var tex_pos : Vector2 = Vector2.ZERO
-	var region : Rect2 = Rect2()
-	var tile : bool = false
+	var sdata : Dictionary = TextureHelper.Get_Texture_Stretch_Data(
+		_texture,
+		get_size(),
+		stretch_mode,
+		flip_h, flip_v
+	)
+	if sdata.is_empty(): return
 	
-	match(stretch_mode):
-		TextureRect.STRETCH_SCALE:
-			tex_size = get_size()
-		TextureRect.STRETCH_TILE:
-			tex_size = get_size()
-			tile = true
-		TextureRect.STRETCH_KEEP:
-			tex_size = _texture.get_size()
-		TextureRect.STRETCH_KEEP_ASPECT_CENTERED, TextureRect.STRETCH_KEEP_ASPECT:
-			var csize : Vector2 = get_size()
-			var tw : float = _texture.get_width() * (csize.y / _texture.get_height())
-			var th : float = csize.y
-			
-			if tw > csize.x:
-				tw = csize.x
-				th = _texture.get_height() * (csize.x / _texture.get_width())
-			
-			if stretch_mode == TextureRect.STRETCH_KEEP_ASPECT_CENTERED:
-				tex_pos = Vector2(
-					(csize.x - tw) * 0.5,
-					(csize.y - th) * 0.5
-				)
-			
-			tex_size.x = tw
-			tex_size.y = th
-		TextureRect.STRETCH_KEEP_ASPECT_COVERED:
-			var csize : Vector2 = get_size()
-			var tsize : Vector2 = _texture.get_size()
-			var scale_size : Vector2 = Vector2(
-				csize.x / tsize.x,
-				csize.y / tsize.y
-			)
-			var nscale : float = max(scale_size.x, scale_size.y)
-			tex_size = tsize * nscale
-			region.position = ((tex_size - csize) / nscale).abs() * 2.0
-			region.size = csize / nscale
-		
-	#if not region.has_area():
-		#var scale_size : Vector2 = Vector2(
-			#tex_size.x / _texture.get_width(),
-			#tex_size.y / _texture.get_height()
-		#)
-		#if flip_h:
-			#tex_pos = _texture
-		#Size2 scale_size(size.width / texture->get_width(), size.height / texture->get_height());
-		#offset.width += hflip ? p_atlas->get_margin().get_position().width * scale_size.width * 2 : 0;
-		#offset.height += vflip ? p_atlas->get_margin().get_position().height * scale_size.height * 2 : 0;
-	
-	tex_size.x *= -1.0 if flip_h else 1.0
-	tex_size.y *= -1.0 if flip_v else 1.0
-	
-	if region.has_area():
-		draw_texture_rect_region(_texture, Rect2(tex_pos, tex_size), region)
+	if sdata.region.has_area():
+		draw_texture_rect_region(_texture, sdata.rect, sdata.region)
 	else:
-		draw_texture_rect(_texture, Rect2(tex_pos, tex_size), tile)
+		draw_texture_rect(_texture, sdata.rect, sdata.tiled)
 
 
 func _get_minimum_size() -> Vector2:
 	if _texture != null:
 		match(expand_mode):
-			TextureRect.EXPAND_KEEP_SIZE:
+			TextureHelper.ExpandMode.KEEP_SIZE:
 				return _texture.get_size()
-			TextureRect.EXPAND_IGNORE_SIZE:
+			TextureHelper.ExpandMode.IGNORE_SIZE:
 				return Vector2.ZERO
-			TextureRect.EXPAND_FIT_WIDTH:
+			TextureHelper.ExpandMode.FIT_WIDTH:
 				return Vector2(get_size().y, 0)
-			TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL:
+			TextureHelper.ExpandMode.FIT_WIDTH_PROPORTIONAL:
 				var ratio : float = _texture.get_width() / _texture.get_height()
 				return Vector2(get_size().y * ratio, 0)
-			TextureRect.EXPAND_FIT_HEIGHT:
+			TextureHelper.ExpandMode.FIT_HEIGHT:
 				return Vector2(0, get_size().x)
-			TextureRect.EXPAND_FIT_HEIGHT_PROPORTIONAL:
+			TextureHelper.ExpandMode.FIT_HEIGHT_PROPORTIONAL:
 				var ratio : float = _texture.get_height() / _texture.get_width()
 				return Vector2(0, get_size().x * ratio)
 	return Vector2.ZERO

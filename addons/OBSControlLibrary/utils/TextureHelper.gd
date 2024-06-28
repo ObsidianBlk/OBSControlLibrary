@@ -16,6 +16,15 @@ enum StretchMode {
 	KEEP_ASPECT_COVERED=TextureRect.StretchMode.STRETCH_KEEP_ASPECT_COVERED
 }
 
+enum ExpandMode {
+	KEEP_SIZE=TextureRect.EXPAND_KEEP_SIZE,
+	IGNORE_SIZE=TextureRect.EXPAND_IGNORE_SIZE,
+	FIT_WIDTH=TextureRect.EXPAND_FIT_WIDTH,
+	FIT_WIDTH_PROPORTIONAL=TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL,
+	FIT_HEIGHT=TextureRect.EXPAND_FIT_HEIGHT,
+	FIT_HEIGHT_PROPORTIONAL=TextureRect.EXPAND_FIT_HEIGHT_PROPORTIONAL
+}
+
 # ------------------------------------------------------------------------------
 # Public Static Methods
 # ------------------------------------------------------------------------------
