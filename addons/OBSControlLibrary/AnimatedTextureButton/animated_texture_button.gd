@@ -3,11 +3,19 @@
 extends BaseButton
 class_name AnimatedTextureButton
 
+## Button displayed using animated sprite frames
+##
+## Used for creating buttons where the various buttons states are displayed as animations.
+## Utilized a SpriteFrames resourse for texture and animation data. Buttons states are defined
+## as the animation within the defined SpriteFrames resource to use for any specific state.
+
 
 # ------------------------------------------------------------------------------
 # Signals
 # ------------------------------------------------------------------------------
+## Signal emitted when a non-looped animation finishes.
 signal animation_finished(anim_name : StringName)
+## Signal emitted when a loop animation finished a sequence and is about to start again.
 signal animation_looped(anim_name : StringName)
 
 
@@ -18,21 +26,36 @@ signal animation_looped(anim_name : StringName)
 # ------------------------------------------------------------------------------
 # Export Variables
 # ------------------------------------------------------------------------------
+## The texture and animations resource used for the visual representations of the button.
 @export var sprite_frames : SpriteFrames = null:										set=set_sprite_frames, get=get_sprite_frames
+## If true, the size of the texture won't be considered for minimum size calculations, allowing the AnimatedTextureButton to be shrunk down past the texture size.
 @export var ignore_texture_size : bool = false:											set=set_ignore_texture_size
+## Controls the texture's behaviour when resizing the node's bounding rectangle. 
 @export var stretch_mode : TextureHelper.StretchMode = TextureHelper.StretchMode.KEEP:	set=set_stretch_mode
+## If true, flips the texture horizontally.
 @export var flip_h : bool = false:														set=set_flip_h
+## If true, flips the texture vertically.
 @export var flip_v : bool = false:														set=set_flip_v
+## If true, will play animation in editor window.
 @export var playing : bool = true
 
+
 @export_subgroup("Animations")
+## Animation to play by default when not pressed, toggled, or in the hover state.
 @export var normal_animation : StringName = &"":		set=set_normal_animation
+## Animation to play on mouse down over the node, or the node has keyboard focus and the user pressed the Enter or BaseButton.shortcut key.
 @export var pressed_animation : StringName = &"":		set=set_pressed_animation
+## Animation to play when pressed on and toggle_mode is true. If animation is not looping, upon completion, the pressed state will become active.
 @export var toggle_animation : StringName = &"":		set=set_toggle_animation
+## Animation to play when pressed off and toggle_mode is true. If animation is not looping, upon completion, animation will change to normal or hover depending on mouse state.
 @export var untoggle_animation : StringName = &"":		set=set_untoggle_animation
+## Animation to play when mouse hovers the node.
 @export var hover_animation : StringName = &"":			set=set_hover_animation
+## Animation to play when node is disabled.
 @export var disabled_animation : StringName = &"":		set=set_disabled_animation
+## Animation to play when node has mouse or keyboard focus. Texture will be displayed over the base animation.
 @export var focused_animation : StringName = &"":		set=set_focused_animation
+## Animation to use for click detection. Each frame of the animation should be pure black and white image.
 @export var click_mask_animation : StringName = &"":	set=set_click_mask_animation
 
 # ------------------------------------------------------------------------------
@@ -184,18 +207,10 @@ func _notification(what : int) -> void:
 		NOTIFICATION_MOUSE_ENTER:
 			_mouse_hover = true
 			_UpdateActiveAnimation()
-			#if disabled:
-				#_sfm.begin_animation(disabled_animation)
-			#else:
-				#_sfm.begin_animation(hover_animation)
 			update_minimum_size()
 		NOTIFICATION_MOUSE_EXIT:
 			_mouse_hover = false
 			_UpdateActiveAnimation()
-			#if disabled:
-				#_sfm.begin_animation(disabled_animation)
-			#elif not button_pressed:
-				#_sfm.begin_animation(normal_animation)
 		NOTIFICATION_RESIZED:
 			update_minimum_size()
 		NOTIFICATION_THEME_CHANGED:
@@ -258,15 +273,11 @@ func _on_self_button_pressed() -> void:
 	if toggle_mode: return
 	_sfm.begin_animation(pressed_animation)
 	if not _sfm.is_animation_looped():
-		print("Locking Animation")
 		_lock_animation = true
 		await _sfm.animation_finished
 		_lock_animation = false
 	_UpdateActiveAnimation()
-	#if _mouse_hover:
-		#_sfm.begin_animation(hover_animation)
-	#else:
-		#_sfm.begin_animation(normal_animation)
+
 
 func _on_self_button_toggled(toggle_on : bool) -> void:
 	if disabled: return
@@ -278,8 +289,6 @@ func _on_self_button_toggled(toggle_on : bool) -> void:
 				await _sfm.animation_finished
 				_lock_animation = false
 		_UpdateActiveAnimation()
-		#elif _sfm.has_animation(pressed_animation):
-			#_sfm.begin_animation(pressed_animation)
 	else:
 		if _sfm.has_animation(untoggle_animation):
 			_sfm.begin_animation(untoggle_animation)
@@ -288,8 +297,3 @@ func _on_self_button_toggled(toggle_on : bool) -> void:
 				await _sfm.animation_finished
 				_lock_animation = false
 		_UpdateActiveAnimation()
-		#if _mouse_hover:
-			#_sfm.begin_animation(hover_animation)
-		#else:
-			#_sfm.begin_animation(normal_animation)
-	

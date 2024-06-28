@@ -3,11 +3,19 @@
 extends Control
 class_name AnimatedTextureRect
 
+## A control that displays an animation
+##
+## A control similar to a TextureRect node, but displays the selected animation from a SpriteFrames
+## resource. Can be used for animated icons within a GUI. The texture's placement can be controlled
+## with the stretch_mode property. It can scale, tile, or stay centered inside its bounding rectangle.
+
 # ------------------------------------------------------------------------------
 # Signals
 # ------------------------------------------------------------------------------
+## Signal emitted when a non-looped animation finishes.
 signal animation_finished(anim_name : StringName)
-signal loop_finished(anim_name : StringName)
+## Signal emitted when a loop animation finished a sequence and is about to start again.
+signal animation_looped(anim_name : StringName)
 
 # ------------------------------------------------------------------------------
 # Constants and ENUMs
@@ -17,18 +25,24 @@ const CUSTOM_SPEED_THRESHOLD : float = 0.001
 # ------------------------------------------------------------------------------
 # Export Variables
 # ------------------------------------------------------------------------------
-@export_category("Animated Texture Rect")
-
 @export_subgroup("Animation")
+## The SpriteFrames resource containing the animation(s)
 @export var sprite_frames : SpriteFrames = null
+## Current animation from the SpriteFrames resource.
 @export var animation : StringName = &"default":				set = set_animation
+## The speed scaling ratio. For example, if this value is 1, then the animation plays at normal speed. If it's 0.5, animation plays at half speed. If it's 2, the animation plays at double speed.
 @export var speed_scale : float = 1.0:							set = set_speed_scale
+## Automatically play animation in the editor.
 @export var auto_play : bool = false:							set = set_auto_play
 
 @export_subgroup("Display")
+## Controls the texture's behaviour when resizing the node's bounding rectangle. 
 @export var stretch_mode : TextureHelper.StretchMode = TextureHelper.StretchMode.KEEP:		set=set_stretch_mode
+## Defines how minimum size is determined based on texture size.
 @export var expand_mode : TextureHelper.ExpandMode = TextureHelper.ExpandMode.KEEP_SIZE:	set=set_expand_mode
+## If true, flips the texture horizontally.
 @export var flip_h : bool = false:															set=set_flip_h
+## If true, flips the texture vertically.
 @export var flip_v : bool = false:															set=set_flip_v
 
 # ------------------------------------------------------------------------------
@@ -116,7 +130,7 @@ func _process(delta: float) -> void:
 		_cframe += _dir
 		if _cframe < 0 or _cframe == sprite_frames.get_frame_count(_canim):
 			if sprite_frames.get_animation_loop(_canim):
-				loop_finished.emit(_canim)
+				animation_looped.emit(_canim)
 				_cframe = 0 if _dir > 0 else sprite_frames.get_frame_count(_canim) - 1
 			else:
 				animation_finished.emit(_canim)
@@ -188,18 +202,34 @@ func _CalcFrameDuration() -> float:
 # ------------------------------------------------------------------------------
 # Public Methods
 # ------------------------------------------------------------------------------
+## Returns the actual playing speed of current animation or 0 if not playing.
+## This speed is the speed_scale property multiplied by custom_speed argument
+## specified when calling the play method.[br]
+## Returns a negative value if the current animation is playing backwards.
 func get_playing_speed() -> float:
 	if sprite_frames == null or not _playing: return 0.0
 	if not sprite_frames.has_animation(_canim): return 0.0
 	return sprite_frames.get_animation_speed(_canim) * _sscale * _dir
 
+## Returns [code]true[/code] if an animation is currently playing
+## (even if speed_scale and/or [code]custom_speed[/code] are [code]0[/code]).
 func is_playing() -> bool:
 	if sprite_frames == null or not sprite_frames.has_animation(_canim):
 		return false
 	return _playing
 
-func play(anim_name : StringName, custom_speed : float = 1.0, from_end : bool = false) -> void:
+## Plays the animation with key name. If [param custom_speed] is negative and [param from_end] is
+## [code]true[/code], the animation will play backwards (which is equivalent to calling
+## [method play_backwards]).
+## [br]
+## If this method is called with that same animation name, or with no name parameter,
+## the assigned animation will resume playing if it was paused.
+func play(anim_name : StringName = &"", custom_speed : float = 1.0, from_end : bool = false) -> void:
 	if sprite_frames == null or abs(custom_speed) <= CUSTOM_SPEED_THRESHOLD: return
+	if anim_name.is_empty() and not _canim.is_empty():
+		_playing = true
+		return
+	
 	if sprite_frames.has_animation(anim_name):
 		_canim = anim_name
 		_sscale = speed_scale * abs(custom_speed)
@@ -209,11 +239,30 @@ func play(anim_name : StringName, custom_speed : float = 1.0, from_end : bool = 
 		_UpdateFrame()
 		_playing = true
 
-func play_backwards(anim_name : StringName) -> void:
+## Plays the animation with key name in reverse.
+## [br]
+## This method is a shorthand for [method play] with [code]custom_speed = -1.0[/code]
+## and [code]from_end = true[/code], so see its description for more information.
+func play_backwards(anim_name : StringName = &"") -> void:
 	play(anim_name, -1.0, true)
 
+## Pauses the currently playing animation. 
+## Calling [method pause], or calling [method play] or [method play_backwards] without arguments
+## will resume the animation from the current playback position.
+## [br]
+## See also [method stop].
+func pause() -> void:
+	if not _canim.is_empty():
+		_playing = not _playing
+
+## Stops the currently playing animation.
+## The animation position is reset to [code]0[/code] and the [param custom_speed] is reset to [code]1.0[/code].
+## See also [method pause].
 func stop() -> void:
 	_playing = false
+	if not _canim.is_empty():
+		_cframe = sprite_frames.get_frame_count(_canim) - 1 if _dir < 0 else 0
+		_sscale = speed_scale
 
 func set_frame_and_progress(frame : int, progress : float) -> void:
 	if sprite_frames == null or _canim.is_empty(): return
