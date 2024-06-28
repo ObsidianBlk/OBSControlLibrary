@@ -149,3 +149,10 @@ func has_animation(anim_name : StringName) -> bool:
 		return sprite_frames.has_animation(anim_name)
 	return false
 
+func is_animation_playing() -> bool:
+	if sprite_frames == null or not sprite_frames.has_animation(animation): return false
+	return _WithinAnimation()
+
+func is_animation_looped() -> bool:
+	if sprite_frames == null or not sprite_frames.has_animation(animation): return false
+	return sprite_frames.get_animation_loop(animation)

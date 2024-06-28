@@ -42,6 +42,7 @@ var _sfm : SpriteFramesManager = SpriteFramesManager.new()
 var _sfm_focus : SpriteFramesManager = SpriteFramesManager.new()
 var _sfm_click_mask : SpriteFramesManager = SpriteFramesManager.new()
 var _mouse_hover : bool = false
+var _lock_animation : bool = false
 
 # ------------------------------------------------------------------------------
 # Setters / Getters
@@ -182,17 +183,19 @@ func _notification(what : int) -> void:
 			queue_redraw()
 		NOTIFICATION_MOUSE_ENTER:
 			_mouse_hover = true
-			if disabled:
-				_sfm.begin_animation(disabled_animation)
-			else:
-				_sfm.begin_animation(hover_animation)
+			_UpdateActiveAnimation()
+			#if disabled:
+				#_sfm.begin_animation(disabled_animation)
+			#else:
+				#_sfm.begin_animation(hover_animation)
 			update_minimum_size()
 		NOTIFICATION_MOUSE_EXIT:
 			_mouse_hover = false
-			if disabled:
-				_sfm.begin_animation(disabled_animation)
-			elif not button_pressed:
-				_sfm.begin_animation(normal_animation)
+			_UpdateActiveAnimation()
+			#if disabled:
+				#_sfm.begin_animation(disabled_animation)
+			#elif not button_pressed:
+				#_sfm.begin_animation(normal_animation)
 		NOTIFICATION_RESIZED:
 			update_minimum_size()
 		NOTIFICATION_THEME_CHANGED:
@@ -210,21 +213,32 @@ func _EmitSignalByState(anim_name : StringName, anim_state : SpriteFramesManager
 			animation_looped.emit(anim_name)
 
 func _UpdateActiveAnimation() -> void:
-	if not disabled_animation.is_empty() and disabled:
-		_sfm.animation = disabled_animation
-		return
+	if _lock_animation: return
 	
-	if not pressed_animation.is_empty() and button_pressed:
-		_sfm.animation = pressed_animation
-		return
+	if disabled:
+		if not disabled_animation.is_empty() and _sfm.animation != disabled_animation:
+			_sfm.animation = disabled_animation
+			return
 	
-	if not hover_animation.is_empty() and _mouse_hover:
-		_sfm.animation = hover_animation
-		return
+	elif button_pressed:
+		if toggle_mode:
+			if not toggle_animation.is_empty() and _sfm.animation != toggle_animation:
+				_sfm.animation = toggle_animation
+				return
+		else:
+			if not pressed_animation.is_empty() and _sfm.animation != pressed_animation:
+				_sfm.animation = pressed_animation
+				return
 	
-	if not normal_animation.is_empty():
-		_sfm.animation = normal_animation
-		return
+	elif _mouse_hover:
+		if not hover_animation.is_empty() and _sfm.animation != hover_animation:
+			_sfm.animation = hover_animation
+			return
+	
+	else:
+		if not normal_animation.is_empty() and _sfm.animation != normal_animation:
+			_sfm.animation = normal_animation
+			return
 
 # ------------------------------------------------------------------------------
 # Public Methods
@@ -241,26 +255,41 @@ func _on_texture_changed(texture : Texture2D, redraw : bool = true) -> void:
 
 func _on_self_button_pressed() -> void:
 	if disabled or not _sfm.has_animation(pressed_animation): return
+	if toggle_mode: return
 	_sfm.begin_animation(pressed_animation)
-	await _sfm.animation_finished
-	if _mouse_hover:
-		_sfm.begin_animation(hover_animation)
-	else:
-		_sfm.begin_animation(normal_animation)
+	if not _sfm.is_animation_looped():
+		print("Locking Animation")
+		_lock_animation = true
+		await _sfm.animation_finished
+		_lock_animation = false
+	_UpdateActiveAnimation()
+	#if _mouse_hover:
+		#_sfm.begin_animation(hover_animation)
+	#else:
+		#_sfm.begin_animation(normal_animation)
 
 func _on_self_button_toggled(toggle_on : bool) -> void:
 	if disabled: return
 	if toggle_on:
 		if _sfm.has_animation(toggle_animation):
 			_sfm.begin_animation(toggle_animation)
-		elif _sfm.has_animation(pressed_animation):
-			_sfm.begin_animation(pressed_animation)
+			if not _sfm.is_animation_looped():
+				_lock_animation = true
+				await _sfm.animation_finished
+				_lock_animation = false
+		_UpdateActiveAnimation()
+		#elif _sfm.has_animation(pressed_animation):
+			#_sfm.begin_animation(pressed_animation)
 	else:
 		if _sfm.has_animation(untoggle_animation):
 			_sfm.begin_animation(untoggle_animation)
-			await _sfm.animation_finished
-		if _mouse_hover:
-			_sfm.begin_animation(hover_animation)
-		else:
-			_sfm.begin_animation(normal_animation)
+			if not _sfm.is_animation_looped():
+				_lock_animation = true
+				await _sfm.animation_finished
+				_lock_animation = false
+		_UpdateActiveAnimation()
+		#if _mouse_hover:
+			#_sfm.begin_animation(hover_animation)
+		#else:
+			#_sfm.begin_animation(normal_animation)
 	
