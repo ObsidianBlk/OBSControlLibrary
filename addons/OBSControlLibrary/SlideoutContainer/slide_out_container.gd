@@ -3,36 +3,90 @@
 extends Container
 class_name SlideoutContainer
 
+## A Container that tweens an offset of child positions outside of the container or the viewport.
+##
+## Container will take up the amount of space required to fit all children with their combined minimum
+## sizes and anchors. Primarily to be used to offset those children from inside the container
+## (see [member slide_amount]) to either outside the container or outside the viewport
+## (see [member slide_from_viewport).
 
 # ------------------------------------------------------------------------------
 # Signals
 # ------------------------------------------------------------------------------
+## Signal emitted when a slide is about to start.
 signal slide_started()
+
+## Signal emitted when a slide tween finishes.
 signal slide_finished()
+
+## Signal emitted when a slide tween is interrupted or stopped.
 signal slide_interrupted()
 
 
 # ------------------------------------------------------------------------------
 # Constants
 # ------------------------------------------------------------------------------
-enum InitialAction {NONE=0, SLIDE_IN_VIEW=1, SLIDE_FROM_VIEW=2}
-enum SlideEdge {TOP=0, RIGHT=1, BOTTOM=2, LEFT=3}
+## The initial tween state of the container.
+enum InitialAction {
+	## The container will not automatically begin a slide tween.
+	NONE=0,
+	
+	## The container will automatically slide children from outside the container (or viewport) to inside the container.
+	SLIDE_IN_VIEW=1,
+	
+	## The container will automatically slide children from inside the container to outside the container (or viewport).
+	SLIDE_FROM_VIEW=2
+}
+
+## The edge off which children will be offset when sliding.
+enum SlideEdge {
+	## The container's top edge.
+	TOP=0,
+	## The container's right edge.
+	RIGHT=1,
+	## The container's Bottom edge.
+	BOTTOM=2,
+	## The container's left edge.
+	LEFT=3
+}
 
 const DURATION_THRESHOLD : float = 0.0001
 
 # ------------------------------------------------------------------------------
 # Export Variables
 # ------------------------------------------------------------------------------
-@export_category("SlideoutContainer")
+## The action the container will take at initialization. (Default to [enum InitialAction.NONE])
 @export var initial_action : InitialAction = InitialAction.NONE
+
+
 @export_subgroup("Config")
+## The edge children will be offset during a slide.
 @export var slide_edge : SlideEdge = SlideEdge.TOP:			set=set_slide_edge
+
+## The duration (in seconds) a complete slide (from [code]0.0[/code] to [code]1.0[/code] or vice versa) will take to complete.
 @export var slide_duration : float = 0.0:					set=set_slide_duration
+
+## The relative offset of the children in the container.[br][br]
+## A value of [code]0.0[/code] is completely within the container.[br][br]
+## A value of [code]1.0[/code] is completely outside of the container (or viewport).
 @export_range(0.0, 1.0) var slide_amount : float = 0.0:		set=set_slide_amount
+
+## If [code]true[/code] the [member slide_amount] will offset the children between the container and outside the viewport.[br]
+## If [code]false[/code] the [member slide_amount] will offset the children between the container and outside the container.
 @export var slide_from_viewport : bool = true:				set=set_slide_from_viewport
+
+
 @export_subgroup("Tweening")
+## The transition type to use during a slide tween. [b]NOTE:[/b] This value is ignored if a [member custom_curve]
+## is defined.
 @export var transition_type : Tween.TransitionType = Tween.TransitionType.TRANS_LINEAR:	set=set_transition_type
+
+## The easing type to use during a slide tween.[b]NOTE:[/b] This value is ignored if a [member custom_curve]
+## is defined.
 @export var ease_type : Tween.EaseType = Tween.EaseType.EASE_IN:						set=set_ease_type
+
+## [b](OPTIONAL)[/b] A custom curve used to determine the [member slide_amount] during a slide tween.[br][br]
+## If left undefined, the [member transition_type] and [member ease type] will be used.
 @export var custom_curve : Curve = null:												set=set_custom_curve
 
 # ------------------------------------------------------------------------------
@@ -187,6 +241,12 @@ func _UpdateChildrenOffsets(amount_hidden : float) -> void:
 # ------------------------------------------------------------------------------
 # Public Methods
 # ------------------------------------------------------------------------------
+## Initiates a slide for all children within the container.[br][br]
+## [param target] - The target relative offset (see [member slide_amount]) to tween to.[br][br]
+## [param duration] - [i](Optional)[/i] The duration (in seconds) a tween from [code]0.0[/code] to [code]1.0[/code] (and vice versa) should take.[br]
+##    If no value given (or the value is less than or equal to [code]0.0[/code]), the value [member slide_duration] will be used.[br]
+##    [b]NOTE:[/b] The actual duration is adjusted for the existing offset of the children.[br][br]
+## [param ignore_distance] = [i](Optional)[/i] If [code]true[/code], duration will [i]NOT[/i] be adjusted for distance. 
 func slide_to(target : float, duration : float = 0.0, ignore_distance : bool = false) -> void:
 	stop_slide()
 	
@@ -216,15 +276,31 @@ func slide_to(target : float, duration : float = 0.0, ignore_distance : bool = f
 		_tween = null
 	slide_finished.emit()
 
+## Slides all children into the container.[br]
+## This is equivolent to [code]slide_to(0.0, duration, ignore_distance)[/code][br][br]
+## [param duration] - [i](Optional)[/i] The duration (in seconds) a tween from [code]0.0[/code] to [code]1.0[/code] (and vice versa) should take.[br]
+##    If no value given (or the value is less than or equal to [code]0.0[/code]), the value [member slide_duration] will be used.[br]
+##    [b]NOTE:[/b] The actual duration is adjusted for the existing offset of the children.[br][br]
+## [param ignore_distance] = [i](Optional)[/i] If [code]true[/code], duration will [i]NOT[/i] be adjusted for distance.
 func slide_in(duration : float = 0.0, ignore_distance : bool = false) -> void:
 	slide_to(0.0, duration, ignore_distance)
 
+## Slides all children outside of the container (or viewport).[br]
+## This is equivolent to [code]slide_to(1.0, duration, ignore_distance)[/code][br][br]
+## [param duration] - [i](Optional)[/i] The duration (in seconds) a tween from [code]0.0[/code] to [code]1.0[/code] (and vice versa) should take.[br]
+##    If no value given (or the value is less than or equal to [code]0.0[/code]), the value [member slide_duration] will be used.[br]
+##    [b]NOTE:[/b] The actual duration is adjusted for the existing offset of the children.[br][br]
+## [param ignore_distance] = [i](Optional)[/i] If [code]true[/code], duration will [i]NOT[/i] be adjusted for distance.
 func slide_out(duration : float = 0.0, ignore_distance : bool = false) -> void:
 	slide_to(1.0, duration, ignore_distance)
 
+## Returns [code]true[/code] if a slide tween is active.[br]
+## Returns [code]false[/code] if no slide tween is active.
 func is_sliding() -> bool:
 	return _tween != null
 
+## Stops any active slide tween. Childrens' offsets will remain where they were at the point the slide
+## was stopped.
 func stop_slide() -> void:
 	if _tween != null:
 		_tween.kill()

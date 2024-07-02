@@ -3,7 +3,7 @@
 extends Control
 class_name AnimatedTextureRect
 
-## A control that displays an animation
+## A control that displays an animation in a GUI
 ##
 ## A control similar to a TextureRect node, but displays the selected animation from a SpriteFrames
 ## resource. Can be used for animated icons within a GUI. The texture's placement can be controlled
@@ -14,6 +14,7 @@ class_name AnimatedTextureRect
 # ------------------------------------------------------------------------------
 ## Signal emitted when a non-looped animation finishes.
 signal animation_finished(anim_name : StringName)
+
 ## Signal emitted when a loop animation finished a sequence and is about to start again.
 signal animation_looped(anim_name : StringName)
 
