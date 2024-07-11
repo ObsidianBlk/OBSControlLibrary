@@ -55,8 +55,10 @@ signal animation_looped(anim_name : StringName)
 @export var disabled_animation : StringName = &"":		set=set_disabled_animation
 ## Animation to play when node has mouse or keyboard focus. Texture will be displayed over the base animation.
 @export var focused_animation : StringName = &"":		set=set_focused_animation
-## Animation to use for click detection. Each frame of the animation should be pure black and white image.
-@export var click_mask_animation : StringName = &"":	set=set_click_mask_animation
+
+# NOTE: This is commented out until I fully figure out how to (or if I can) handle animated click masks
+# Animation to use for click detection. Each frame of the animation should be pure black and white image.
+#@export var click_mask_animation : StringName = &"":	set=set_click_mask_animation
 
 # ------------------------------------------------------------------------------
 # Variables
@@ -132,13 +134,13 @@ func set_focused_animation(anim_name : StringName) -> void:
 		_sfm_focus.sprite_frames = sprite_frames
 		_sfm_focus.animation = focused_animation
 
-func set_click_mask_animation(anim_name : StringName) -> void:
-	click_mask_animation = anim_name
-	if click_mask_animation.is_empty():
-		_sfm_click_mask.sprite_frames = null
-	else:
-		_sfm_click_mask.sprite_frames = sprite_frames
-		_sfm_click_mask.animation = click_mask_animation
+#func set_click_mask_animation(anim_name : StringName) -> void:
+	#click_mask_animation = anim_name
+	#if click_mask_animation.is_empty():
+		#_sfm_click_mask.sprite_frames = null
+	#else:
+		#_sfm_click_mask.sprite_frames = sprite_frames
+		#_sfm_click_mask.animation = click_mask_animation
 
 # ------------------------------------------------------------------------------
 # Override Methods
