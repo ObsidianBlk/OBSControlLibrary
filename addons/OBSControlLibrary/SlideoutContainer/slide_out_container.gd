@@ -63,7 +63,7 @@ const DURATION_THRESHOLD : float = 0.0001
 ## The edge children will be offset during a slide.
 @export var slide_edge : SlideEdge = SlideEdge.TOP:			set=set_slide_edge
 
-## The duration (in seconds) a complete slide (from [code]0.0[/code] to [code]1.0[/code] or vice versa) will take to complete.
+## The duration (in seconds) of a complete slide (from [code]0.0[/code] to [code]1.0[/code] or vice versa) will take to complete.
 @export var slide_duration : float = 0.0:					set=set_slide_duration
 
 ## The relative offset of the children in the container.[br][br]
