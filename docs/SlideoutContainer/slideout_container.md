@@ -1,56 +1,122 @@
 <center><img src="./imgs/Icon_SlideoutContainer_Large.png" alt="SlideoutContainer icon"></center>
-<h1>SlideoutContainer Documentation</h1>
 
-The *SlideoutContainer* control is intended for use to do a little positional animation with the child nodes contained within. Child nodes within the *SlideoutContainer* are sized and positioned similarly to control nodes placed within a *MarginContainer* with no margins (that is to say, they stack upon one another) however, *SlideoutContainer* can then reposition those nodes outside of itself, relative to either the container itself, or the container's viewport.
+A Container that tweens an offset of child positions outside of the container or the viewport.
 
----
-![SlideoutContainer node in a scene tree](./imgs/in_scene_tree.png  "SlideoutContainer node in a scene tree")
-> SlideoutContainer in a scene tree.
+## Description
 
+Container will take up the amount of space required to fit all children with their combined minimum sizes and anchors. Primarily to be used to offset those children from inside the container (see [member slide_amount]) to either outside the container or outside the viewport (see [member slide_from_viewport).
 
-![SlideoutContainer inspector options](./imgs/inspector_options.png  "SlideoutContainer inspector options")
-> SlideoutContainer inspector options.
+## In Editor Screenshots
 
+|                                                                                                               |                                                                                                             |
+| ------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| ![SlideoutContainer node in a scene tree](./imgs/in_scene_tree.png  "SlideoutContainer node in a scene tree") | ![SlideoutContainer inspector options](./imgs/inspector_options.png  "SlideoutContainer inspector options") |
+| SlideoutContainer in a scene tree.                                                                            | SlideoutContainer inspector options.                                                                        |
 
+## Properties
 
-## Inspector Options
-* **Initial Action** - Determins whether the container will animate it's children when the scene starts.
-    * **None** - Animation will not occure *(default)*
-    * **Slide In View** - Children will be animated *into* the container. Initial position of the children will be based on **Slide Amount**
-    * **Slide from View** - Children will be animated *out* of the container. Initial position of the children will be based on **Slide Amount**
+| Name                                                        | Type                                                                                                 | Description                                                                                                                                                                                                                                                            |
+| ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| <a href="#property-initial_action">initial_action</a>       | [InitialAction](#ENUM-InitialAction)                                                                 | The action the container will take at initialization.                                                                                                                                                                                                                  |
+| <a href="#property-slide_edge">slide_edge</a>               | [SlideEdge](#ENUM-SlideEdge)                                                                         | The edge children will be offset during a slide.                                                                                                                                                                                                                       |
+| <a href="#property-slide_duration">slide_duration</a>       | **float**                                                                                            | The duration *(in seconds)* of a complete slide (from `0.0` to `1.0` or vice versa)                                                                                                                                                                                    |
+| <a href="#property-slide_amount">slide_amount</a>           | **float**                                                                                            | The relative offset of the children in the container.<br/><br/>A value of `0.0` is completely within the container<br/><br/>A value of `1.0` is completely outside of the container *(or viewport)*.                                                                   |
+| <a href="#property-slide_from_view">slide_from_viewport</a> | **bool**                                                                                             | If `true` the [slide_amount](#property-slide_amount) will offset the children between the container and outside the viewport.<br/><br/>If `false` the [slide_amount](#property-slide_amount) will offset the children between the container and outside the container. |
+| <a href="#property-transition_type">transition_type</a>     | [Tween.TransitionType](https://docs.godotengine.org/en/stable/classes/class_tween.html#enumerations) | The transition type to use during a slide tween. **NOTE:** This value is ignored if a [custom_curve](#property-custom_curve) is defined.                                                                                                                               |
+| <a href="#property-ease_type">ease_type</a>                 | [Tween.EaseType](https://docs.godotengine.org/en/stable/classes/class_tween.html#enumerations)       | The easing type to use during a slide tween. **NOTE:** This value is ignored if a [custom_curve](#property-custom_curve) is defined.                                                                                                                                   |
+| <a href="#property-custom_curve">custom_curve</a>           | [Curve](https://docs.godotengine.org/en/stable/classes/class_curve.html)                             | **(OPTIONAL)** A custom curve used to determine the [slide_amount](#property-slide_amount) during a slide tween.<br/><br/>If left undefined, [transition_type](#property-transition_type) and [ease type](#property-ease_type) will be used.                           |
 
-#### Config
-* **Slide Edge** - The direction the children positions will slide along.
-    * **Top** *(default)*
-    * **Bottom**
-    * **Left**
-    * **Right**
-* **Slide Duration** - The time it will take (in seconds), when animating, for children to be moved, completely, in and out of the container (or viewport)
-* **Slide Amount** - The initial offset of children relative to it's container. This is a value of **0.0** (Completely in the container, *default*) to **1.0** (completely outside the container/viewport)
-* **Slide from Viewport** - If checked *(default)* children will slide out of the viewport when **Slide Amount** is set to **1.0**. If unchecked, children will be entirely contained inside the container similar to if the container was a *MarginContainer* with no margin value.
-
-#### Tweening
-* **Transition Type** - The tweening transition type used when slide animations are triggered. *(These options are the same options as used by the Tween object).*
-    * ![Transition type options](./imgs/transition_types.png  "Transition type options")
-* **Ease Type** - The tweening easing type used when slide animations are triggered. *(These options are the same options used by the Tween object).*
-    * **Ease In**
-    * **Ease In Out**
-    * **Ease Out**
-    * **Ease Out In**
-* **Custom Curve** - Optionally, a curve can be defined which will dictate the slide amount offset during tween animations. **NOTE:** If a curve is defined **Transition Type** and **Ease Type** values are ignored.
+## 
 
 ## Public Methods
-| Method | Arguments | Description |
-| --- | --- | --- |
-| slide_to() | **target** *: float*, **duration** *: float* = 0.0 | Tweens the **Slide Amount** property to the target value. Duration is how long the animation would take for all full **0.0** to **1.0** animation. *Example:* If **Slide Amount** is at 0.0, and the arguments **target** is 0.5 and **duration** is 1.0 second, the tween will actually occure over 0.5 seconds, not 1 second |
-| slide_in() | **duration** *: float* = 0.0 | A shorthand for *slide_to(0.0, duration)* |
-| slide_out() | **duration** *: float* = 0.0 | A shorthand for *slide_to(1.0, duration)* |
-| is_sliding() | void | Returns true if an active slide animation is occuring. |
-| stop_slide() | void | Stops any active slide animtion. |
+
+| Return   | Method Name                                                                                   |
+| -------- | --------------------------------------------------------------------------------------------- |
+| **void** | [slide_to](#method-slide_to) (target:**float**, duration:**float**, ignore_distance:**bool**) |
+| **void** | [slide_in](#method-slide_in)(duration:**float**, ignore_distance:**bool**)                    |
+| **void** | [slide_out](#method-slide_out)(duration:**float**, ignore_distance:**bool**)                  |
+| **bool** | [is_sliding](#method-is_sliding)()                                                            |
+| **void** | [stop_slide](#method-stop_sliding)()                                                          |
+
+## Constants and ENUMs
+
+**ENUM** <a href="#ENUM-InitialAction">InitialAction</a>
+
+Some information here
+
+---
+
+**ENUM** <a href="#ENUM-SlideEdge">SlideEdge</a>
+
+Some information here
+
+
 
 ## Signals
-| Signal | Description |
-| --- | --- |
-| slide_started | Emitted before a slide animation starts. |
-| slide_finished | Emitted after a slide animation finishes. |
-| slide_interrupted | Emitted when a slide animation is stopped before finishing. |
+
+<a href="#signal-slide_started">slide_started</a>()
+
+> Signal emitted when a slide is about to start.
+
+---
+
+<a href="#signal-slide_finished">slide_finished</a>()
+
+> Signal emitted when a slide tween finishes.
+
+---
+
+<a href="#signal-slide_interrupted">slide_interrupted</a>()
+
+> Signal emitted when a slide tween is interrupted or stopped.
+
+
+
+## Public Method Descriptions
+
+<a href="#method-slide_to">slide_to</a> (target:**float**, duration:**float**, ignore_distance:**bool**) -> **void**
+
+> Initiates a slide for all children within the container.
+
+| Parameter           | Description                                                                                                                                                                                                                                                                                                                               |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **target**          | The target relative offset (see property [slide_amount](#property-slide_amount)) to tween to.                                                                                                                                                                                                                                             |
+| **duration**        | *(Optional)* The duration *(in seconds)* a tween from `0.0` to `1.0` (and vice versa) should take.<br/><br/>If no value given (or the value is less than or equal to `0.0`), the value [slide_duration](#property-slide_duration) will be used.<br/><br/>NOTE:** The actual duration is adjusted for the existing offset of the children. |
+| **ignore_distance** | *(Optional)* If `true`, duration will *NOT* be adjusted for distance.                                                                                                                                                                                                                                                                     |
+
+---
+
+<a href="#method-slide_in">slide_in</a>(duration:**float**, ignore_distance:**bool**) -> **void**
+
+> Slides all children into the container.
+> This is equivolent to `slide_to(0.0, duration, ignore_distance)`
+
+| Parameter           | Description                                                                                                                                                                                                                                                                                                                               |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **duration**        | *(Optional)* The duration *(in seconds)* a tween from `0.0` to `1.0` (and vice versa) should take.<br/><br/>If no value given (or the value is less than or equal to `0.0`), the value [slide_duration](#property-slide_duration) will be used.<br/><br/>NOTE:** The actual duration is adjusted for the existing offset of the children. |
+| **ignore_distance** | *(Optional)* If `true`, duration will *NOT* be adjusted for distance.                                                                                                                                                                                                                                                                     |
+
+---
+
+<a href="#method-slide_out">slide_out</a>(duration:**float**, ignore_distance:**bool**) -> **void**
+
+> Slides all children into the container.
+> This is equivolent to `slide_to(1.0, duration, ignore_distance)`
+
+| Parameter           | Description                                                                                                                                                                                                                                                                                                                               |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **duration**        | *(Optional)* The duration *(in seconds)* a tween from `0.0` to `1.0` (and vice versa) should take.<br/><br/>If no value given (or the value is less than or equal to `0.0`), the value [slide_duration](#property-slide_duration) will be used.<br/><br/>NOTE:** The actual duration is adjusted for the existing offset of the children. |
+| **ignore_distance** | *(Optional)* If `true`, duration will *NOT* be adjusted for distance.                                                                                                                                                                                                                                                                     |
+
+---
+
+<a href="#method-is_sliding">is_sliding</a>() -> **bool**
+
+> Returns `true` if a slide tween is active.
+> Returns `false` if no slide tween is active.
+
+---
+
+<a href="#methods-stop_sliding">stop_sliding</a>() -> **void**
+
+> Stops any active slide tween. Childrens' offsets will remain where they were at the point the slide was stopped.
