@@ -6,7 +6,7 @@ class_name AnimatedTextureButton
 ## Button displayed using animated sprite frames
 ##
 ## Used for creating buttons where the various buttons states are displayed as animations.
-## Utilized a SpriteFrames resourse for texture and animation data. Buttons states are defined
+## Utilizes a SpriteFrames resourse for texture and animation data. Buttons states are defined
 ## as the animation within the defined SpriteFrames resource to use for any specific state.
 
 
@@ -53,7 +53,7 @@ signal animation_looped(anim_name : StringName)
 @export var hover_animation : StringName = &"":			set=set_hover_animation
 ## Animation to play when node is disabled.
 @export var disabled_animation : StringName = &"":		set=set_disabled_animation
-## Animation to play when node has mouse or keyboard focus. Texture will be displayed over the base animation.
+## Animation to play when node has mouse or keyboard focus. Animation will be displayed over the base animation.
 @export var focused_animation : StringName = &"":		set=set_focused_animation
 
 # NOTE: This is commented out until I fully figure out how to (or if I can) handle animated click masks

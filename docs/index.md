@@ -1,12 +1,15 @@
 # OBS Control Library Documentation
 
 ## New Control Nodes
+
 * ![SlideoutContainer icon](../addons/OBSControlLibrary/SlideoutContainer/SlideoutContainer.svg "SlideoutContainer icon") [SlideoutContainer](./SlideoutContainer/slideout_container.md) - A container that can animate child nodes sliding into or out of the container, or the active viewport.
-* ![SlideoutContainer icon](../addons/OBSControlLibrary/AnimatedTextureRect/AnimatedTextureRect.svg "SlideoutContainer icon") [AnimatedTextureRect](./AnimatedTextureRect/animated_texture_rect.md) - An animated form of the TextureRect node, using the SpriteFrames resource for texture and animation data.
+* ![AnimatedTextureRect icon](../addons/OBSControlLibrary/AnimatedTextureRect/AnimatedTextureRect.svg "AnimatedTextureRect icon") [AnimatedTextureRect](./AnimatedTextureRect/animated_texture_rect.md) - An animated form of the TextureRect node, using the SpriteFrames resource for texture and animation data.
+* ![AnimatedTextureButton icon](../addons/OBSControlLibrary/AnimatedTextureButton/AnimatedTextureButton.svg "AnimatedTextureButton icon") [AnimatedTextureButton](./AnimatedTextureButton/animated_texture_button.md) - An animated form of the TextureButton node, using the SpriteFrames resource for texture and animation data.
 
 ![Demo of Slideout Container and AnimatedTextureRect](./imgs/demo_slideout_container_and_animated_texture_rect.gif  "Demo of Slideout Container and AnimatedTextureRect")
 
 ## Installation
+
 * Clone the OBSControlLibrary repository
 * Copy the addons folder into your project's main folder.
 
@@ -19,3 +22,5 @@
 * In the Project settings dialog window, Select the Plugins TAB and enable OBSControlLibrary
 
 ![Enable addon](./imgs/enable_addon.png  "Enable addon")
+
+* Select the control you want to use by selecting it in the Add Child Node menu.

@@ -33,6 +33,10 @@ const CUSTOM_SPEED_THRESHOLD : float = 0.001
 @export var animation : StringName = &"default":				set = set_animation
 ## The speed scaling ratio. For example, if this value is 1, then the animation plays at normal speed. If it's 0.5, animation plays at half speed. If it's 2, the animation plays at double speed.
 @export var speed_scale : float = 1.0:							set = set_speed_scale
+## The current frame in the active animation. If no animation is defined, the index will be [code]0[/code]
+@export var frame : int:										set=set_frame, get=get_frame
+## The progress through the current frame in the active animation. If no animation is defined, the value will be [code]0.0[/code]
+@export var frame_progress : float:								set=set_frame_progress, get=get_frame_progress
 ## Automatically play animation in the editor.
 @export var auto_play : bool = false:							set = set_auto_play
 
@@ -116,6 +120,29 @@ func set_expand_mode(mode : TextureHelper.ExpandMode) -> void:
 		expand_mode = mode
 		queue_redraw()
 		update_minimum_size()
+
+func set_frame(f : int) -> void:
+	if sprite_frames == null: return
+	if not sprite_frames.has_animation(_canim): return
+	if f >= 0 and f < sprite_frames.get_frame_count(_canim):
+		_cframe = 0
+		_frame_dur = _CalcFrameDuration()
+
+func get_frame() -> int:
+	if sprite_frames != null and sprite_frames.has_animation(_canim):
+		return _cframe
+	return 0.0
+
+func set_frame_progress(p : float) -> void:
+	p = max(0, min(p, 1.0))
+	set_frame_and_progress(_cframe, p)
+
+func get_frame_progress() -> float:
+	if sprite_frames != null and sprite_frames.has_animation(_canim):
+		var total_dur : float = sprite_frames.get_frame_duration(_canim, _cframe)
+		if total_dur > 0.0:
+			return 1.0 - (_frame_dur / total_dur)
+	return 0.0
 
 # ------------------------------------------------------------------------------
 # Override Methods
@@ -265,6 +292,8 @@ func stop() -> void:
 		_cframe = sprite_frames.get_frame_count(_canim) - 1 if _dir < 0 else 0
 		_sscale = speed_scale
 
+## The setter of [member frame] resets the [member frame_progress] to [code]0.0[/code] implicitly, but this method avoids that.[br]
+## This is useful when you want to carry over the current [member frame_progress] to another [member frame].
 func set_frame_and_progress(frame : int, progress : float) -> void:
 	if sprite_frames == null or _canim.is_empty(): return
 	var frames : int = sprite_frames.get_frame_count(_canim)

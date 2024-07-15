@@ -1,4 +1,5 @@
 <center><img src="./imgs/Icon_SlideoutContainer_Large.png" alt="SlideoutContainer icon"></center>
+<center><h1>SlideoutContainer</h1></center>
 
 A Container that tweens an offset of child positions outside of the container or the viewport.
 
@@ -50,8 +51,6 @@ Some information here
 
 Some information here
 
-
-
 ## Signals
 
 <a href="#signal-slide_started">slide_started</a>()
@@ -69,8 +68,6 @@ Some information here
 <a href="#signal-slide_interrupted">slide_interrupted</a>()
 
 > Signal emitted when a slide tween is interrupted or stopped.
-
-
 
 ## Public Method Descriptions
 
