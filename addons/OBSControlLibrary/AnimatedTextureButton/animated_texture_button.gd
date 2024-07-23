@@ -68,6 +68,7 @@ var _sfm_focus : SpriteFramesManager = SpriteFramesManager.new()
 var _sfm_click_mask : SpriteFramesManager = SpriteFramesManager.new()
 var _mouse_hover : bool = false
 var _lock_animation : bool = false
+var _toggled : bool = false
 
 # ------------------------------------------------------------------------------
 # Setters / Getters
@@ -284,14 +285,17 @@ func _on_self_button_pressed() -> void:
 func _on_self_button_toggled(toggle_on : bool) -> void:
 	if disabled: return
 	if toggle_on:
-		if _sfm.has_animation(toggle_animation):
-			_sfm.begin_animation(toggle_animation)
-			if not _sfm.is_animation_looped():
-				_lock_animation = true
-				await _sfm.animation_finished
-				_lock_animation = false
-		_UpdateActiveAnimation()
+		if not _toggled:
+			_toggled = true
+			if _sfm.has_animation(toggle_animation):
+				_sfm.begin_animation(toggle_animation)
+				if not _sfm.is_animation_looped():
+					_lock_animation = true
+					await _sfm.animation_finished
+					_lock_animation = false
+			_UpdateActiveAnimation()
 	else:
+		_toggled = false
 		if _sfm.has_animation(untoggle_animation):
 			_sfm.begin_animation(untoggle_animation)
 			if not _sfm.is_animation_looped():
