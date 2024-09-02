@@ -3,6 +3,7 @@
 ![GitHub License](https://img.shields.io/github/license/ObsidianBlk/OBSControlLibrary)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/t/ObsidianBlk/OBSControlLibrary)
 ![GitHub last commit](https://img.shields.io/github/last-commit/ObsidianBlk/OBSControlLibrary)
+![Static Basge](https://img.shields.io/badge/OBSControlsLibrary%20Version-0.2.1-blue)
 
 ---
 

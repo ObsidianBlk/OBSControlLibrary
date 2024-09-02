@@ -145,8 +145,8 @@ layout_mode = 2
 script = ExtResource("4_7hg0g")
 sprite_frames = SubResource("SpriteFrames_yg2p7")
 animation = &"idle"
-frame = 1
-frame_progress = 0.915777
+frame = 3
+frame_progress = 0.867558
 auto_play = true
 stretch_mode = 5
 

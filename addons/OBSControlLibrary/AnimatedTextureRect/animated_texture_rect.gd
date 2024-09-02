@@ -37,7 +37,7 @@ const CUSTOM_SPEED_THRESHOLD : float = 0.001
 @export var frame : int:										set=set_frame, get=get_frame
 ## The progress through the current frame in the active animation. If no animation is defined, the value will be [code]0.0[/code]
 @export var frame_progress : float:								set=set_frame_progress, get=get_frame_progress
-## Automatically play animation in the editor.
+## Automatically play animation in the editor and on startup.
 @export var auto_play : bool = false:							set = set_auto_play
 
 @export_subgroup("Display")
@@ -75,8 +75,11 @@ func set_sprite_frames(sf : SpriteFrames) -> void:
 	sprite_frames = sf
 	if not Engine.is_editor_hint(): return
 	if sprite_frames != null:
-		if sprite_frames.has_animation(animation) and auto_play:
-			play(animation)
+		if sprite_frames.has_animation(animation):
+			if auto_play:
+				play(animation)
+			else:
+				set_frame_and_progress(0, 0.0)
 	else:
 		_texture = null
 		queue_redraw()
@@ -85,6 +88,7 @@ func set_sprite_frames(sf : SpriteFrames) -> void:
 func set_speed_scale(s : float) -> void:
 	if s >= 0.0:
 		speed_scale = s
+		_sscale = speed_scale
 
 func set_animation(anim_name : StringName) -> void:
 	animation = anim_name
@@ -93,6 +97,9 @@ func set_animation(anim_name : StringName) -> void:
 			if not Engine.is_editor_hint(): return
 			if auto_play:
 				play(animation)
+			else:
+				_canim = animation
+				set_frame_and_progress(0, 0.0)
 
 
 func set_auto_play(ap : bool) -> void:
@@ -100,6 +107,8 @@ func set_auto_play(ap : bool) -> void:
 	if not Engine.is_editor_hint(): return
 	if auto_play and sprite_frames != null and sprite_frames.has_animation(animation):
 		play(animation)
+	elif not auto_play:
+		stop()
 
 func set_flip_h(f : bool) -> void:
 	flip_h = f
@@ -125,8 +134,7 @@ func set_frame(f : int) -> void:
 	if sprite_frames == null: return
 	if not sprite_frames.has_animation(_canim): return
 	if f >= 0 and f < sprite_frames.get_frame_count(_canim):
-		_cframe = 0
-		_frame_dur = _CalcFrameDuration()
+		set_frame_and_progress(f, 0.0)
 
 func get_frame() -> int:
 	if sprite_frames != null and sprite_frames.has_animation(_canim):
@@ -300,6 +308,8 @@ func set_frame_and_progress(frame : int, progress : float) -> void:
 	if frame >= 0 and frame < frames:
 		_cframe = frame
 		_frame_dur = _CalcFrameDuration() * (1.0 - progress)
+		if not auto_play:
+			_UpdateFrame()
 
 
 # ------------------------------------------------------------------------------
