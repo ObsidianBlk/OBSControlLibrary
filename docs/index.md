@@ -8,6 +8,12 @@
 
 ![Demo of Slideout Container and AnimatedTextureRect](./imgs/demo_slideout_container_and_animated_texture_rect.gif  "Demo of Slideout Container and AnimatedTextureRect")
 
+## Demonstration / Tutorial
+I have created a Demonstration / Tutorial video showing a project being created using the [AnimatedTextureRect](./AnimatedTextureRect/animated_texture_rect.md), [AnimatedTextureButton](./AnimatedTextureButton/animated_texture_button.md), and [SlideoutContainer](./SlideoutContainer/slideout_container.md).
+
+[The video is available here!](https://youtu.be/R2xknYgbbKQ "Addon demonstration video on YouTube")
+
+
 ## Installation
 
 * Clone the OBSControlLibrary repository
