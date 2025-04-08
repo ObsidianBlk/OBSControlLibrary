@@ -11,6 +11,7 @@
 
 ![Static Badge](https://img.shields.io/badge/Godot-v4.2.2-%2523478cbf?logo=godot-engine&logoColor=cyian&color=green)
 ![Static Badge](https://img.shields.io/badge/Godot-v4.3-%2523478cbf?logo=godot-engine&logoColor=cyian&color=green)
+![Static Badge](https://img.shields.io/badge/Godot-v4.4-%2523478cbf?logo=godot-engine&logoColor=cyian&color=green)
 ---
 
 An addon of new Control nodes for use in your projects!

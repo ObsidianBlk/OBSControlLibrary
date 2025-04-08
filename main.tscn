@@ -1,9 +1,9 @@
 [gd_scene load_steps=19 format=3 uid="uid://dxfywxkw25dcl"]
 
-[ext_resource type="Script" path="res://main.gd" id="1_5m4i5"]
-[ext_resource type="Script" path="res://addons/OBSControlLibrary/SlideoutContainer/slide_out_container.gd" id="1_wssgj"]
-[ext_resource type="Script" path="res://addons/OBSControlLibrary/AnimatedTextureRect/animated_texture_rect.gd" id="4_7hg0g"]
-[ext_resource type="Script" path="res://addons/OBSControlLibrary/AnimatedTextureButton/animated_texture_button.gd" id="5_bk2g2"]
+[ext_resource type="Script" uid="uid://usrx5ldcbmgm" path="res://main.gd" id="1_5m4i5"]
+[ext_resource type="Script" uid="uid://152w2kiwawmx" path="res://addons/OBSControlLibrary/SlideoutContainer/slide_out_container.gd" id="1_wssgj"]
+[ext_resource type="Script" uid="uid://b56xn8kwao8rs" path="res://addons/OBSControlLibrary/AnimatedTextureRect/animated_texture_rect.gd" id="4_7hg0g"]
+[ext_resource type="Script" uid="uid://cvyaeabf016yc" path="res://addons/OBSControlLibrary/AnimatedTextureButton/animated_texture_button.gd" id="5_bk2g2"]
 [ext_resource type="Texture2D" uid="uid://xxhpl1sqketd" path="res://assets/Hero.png" id="5_n3ggb"]
 [ext_resource type="SpriteFrames" uid="uid://bgrpvfauksqob" path="res://assets/arrow_sprite_frames.tres" id="6_ikaau"]
 [ext_resource type="SpriteFrames" uid="uid://q41ydk1wlmxw" path="res://assets/pushbutton_sprite_frames.tres" id="7_f0c4b"]
@@ -145,8 +145,7 @@ layout_mode = 2
 script = ExtResource("4_7hg0g")
 sprite_frames = SubResource("SpriteFrames_yg2p7")
 animation = &"idle"
-frame = 1
-frame_progress = 0.917907
+frame_progress = 0.8445
 auto_play = true
 stretch_mode = 5
 
@@ -187,6 +186,7 @@ size_flags_vertical = 1
 size_flags_stretch_ratio = 1.0
 localize_numeral_system = true
 tooltip_text = ""
+tooltip_auto_translate_mode = 0
 focus_neighbor_left = NodePath("")
 focus_neighbor_top = NodePath("")
 focus_neighbor_right = NodePath("")
@@ -253,6 +253,7 @@ size_flags_vertical = 1
 size_flags_stretch_ratio = 1.0
 localize_numeral_system = true
 tooltip_text = ""
+tooltip_auto_translate_mode = 0
 focus_neighbor_left = NodePath("")
 focus_neighbor_top = NodePath("")
 focus_neighbor_right = NodePath("")
@@ -324,6 +325,7 @@ size_flags_vertical = 1
 size_flags_stretch_ratio = 1.0
 localize_numeral_system = true
 tooltip_text = ""
+tooltip_auto_translate_mode = 0
 focus_neighbor_left = NodePath("")
 focus_neighbor_top = NodePath("")
 focus_neighbor_right = NodePath("")
@@ -387,6 +389,7 @@ size_flags_vertical = 1
 size_flags_stretch_ratio = 1.0
 localize_numeral_system = true
 tooltip_text = ""
+tooltip_auto_translate_mode = 0
 focus_neighbor_left = NodePath("")
 focus_neighbor_top = NodePath("")
 focus_neighbor_right = NodePath("")
@@ -450,6 +453,7 @@ size_flags_vertical = 1
 size_flags_stretch_ratio = 1.0
 localize_numeral_system = true
 tooltip_text = ""
+tooltip_auto_translate_mode = 0
 focus_neighbor_left = NodePath("")
 focus_neighbor_top = NodePath("")
 focus_neighbor_right = NodePath("")
